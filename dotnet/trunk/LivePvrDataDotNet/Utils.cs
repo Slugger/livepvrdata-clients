@@ -14,18 +14,25 @@
  *       limitations under the License.
  */
 using System;
-using LivePvrData;
-using LivePvrData.Net.Responses;
+using System.Collections.Generic;
+using System.Text;
 
-namespace driver
+namespace LivePvrData
 {
-    class Program
+    class Utils
     {
-        static void Main(string[] args)
+        static private DateTime EPOCH = new DateTime(1970, 1, 1, 0, 0, 0);
+
+        static public long UnixTimestampNow()
         {
-            Client clnt = new Client();
-            Response r = clnt.GetStatus("College Football", new string[] { "Rhode Island", "Syracuse" }, DateTime.UtcNow);
-            Console.WriteLine(r);
+            TimeSpan tSpan = DateTime.UtcNow - EPOCH;
+            return (long)tSpan.TotalSeconds;
+        }
+
+        static public long UnixTimestamp(DateTime time)
+        {
+            TimeSpan tSpan = time - EPOCH;
+            return (long)tSpan.TotalSeconds;
         }
     }
 }

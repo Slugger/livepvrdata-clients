@@ -14,18 +14,18 @@
  *       limitations under the License.
  */
 using System;
-using LivePvrData;
-using LivePvrData.Net.Responses;
+using System.Collections.Generic;
+using System.Text;
 
-namespace driver
+namespace LivePvrData.Net.Responses
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Client clnt = new Client();
-            Response r = clnt.GetStatus("College Football", new string[] { "Rhode Island", "Syracuse" }, DateTime.UtcNow);
-            Console.WriteLine(r);
-        }
+    /// <summary>
+    /// A valid response that returns nothing will simply return a SimpleResponse; these objects contain no data except that the IsError property will be false.
+    /// </summary>
+    public class SimpleResponse : Response {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public SimpleResponse() : base(false) { }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "livepvrdata4cs", "livepvrdata4cs\livepvrdata4cs.csproj", "{F274C766-3E01-4CF1-A9C5-8C39B3EEF511}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivePvrDataDotNet", "livepvrdata4cs\LivePvrDataDotNet.csproj", "{F274C766-3E01-4CF1-A9C5-8C39B3EEF511}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "driver", "driver\driver.csproj", "{0ECA8940-7AD0-4F2E-88D6-5C7A744D3CE2}"
 EndProject
