@@ -48,13 +48,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\livepvrdata4cs\LivePvrDataDotNet.csproj">
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LivePvrDataDotNet\LivePvrDataDotNet.csproj">
       <Project>{F274C766-3E01-4CF1-A9C5-8C39B3EEF511}</Project>
       <Name>LivePvrDataDotNet</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
