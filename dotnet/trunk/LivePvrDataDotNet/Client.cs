@@ -20,6 +20,8 @@ using LivePvrData.Net.Responses;
 using LivePvrData.Net.Requests;
 using JsonExSerializer;
 using System.Collections;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace LivePvrData
 {
@@ -123,7 +125,10 @@ namespace LivePvrData
             Serializer serializer = new Serializer(typeof(StatusRequest));
             try
             {
-                string payload = GetWebClient().UploadString(uri + "api/qryStatus", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
+                string payload = serializer.Serialize(req);
+                WebClient clnt = GetWebClient();
+                SignRequest(clnt, payload);
+                payload = clnt.UploadString(uri + "api/qryStatus", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
                 serializer = new Serializer(typeof(Object));
                 Hashtable jobj = (Hashtable)serializer.Deserialize(payload);
                 if (jobj == null)
@@ -168,7 +173,10 @@ namespace LivePvrData
             Serializer serializer = new Serializer(typeof(OverrideRequest));
             try
             {
-                string payload = GetWebClient().UploadString(uri + "api/override", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
+                string payload = serializer.Serialize(req);
+                WebClient clnt = GetWebClient();
+                SignRequest(clnt, payload);
+                payload = clnt.UploadString(uri + "api/override", "q=" + HttpUtility.UrlEncode(payload));
                 serializer = new Serializer(typeof(Object));
                 Hashtable jobj = (Hashtable)serializer.Deserialize(payload);
                 if (!(bool)jobj["isError"])
@@ -198,6 +206,27 @@ namespace LivePvrData
             clnt.Headers.Add("User-Agent:" + userAgent);
             clnt.Headers.Add("Content-Type: application/x-www-form-urlencoded");
             return clnt;
+        }
+
+        /// <summary>
+        /// Sign an API request by setting the appropriate HTTP headers; nothing is done if Client instance was not provided an email and API access code
+        /// </summary>
+        /// <param name="clnt">The WebClient instance being used to submit the API request to the server</param>
+        /// <param name="payload">The request payload (i.e. API Request object); HMAC signature is derived from this data</param>
+        protected void SignRequest(WebClient clnt, string payload)
+        {
+            if (email != null && email.Length > 0 && secret != null && secret.Length > 0)
+            {
+                UTF8Encoding utf8 = new System.Text.UTF8Encoding();
+                HMACSHA256 hmac = new HMACSHA256(utf8.GetBytes(secret));
+                clnt.Headers.Add("livepvrdata-email", email);
+                MD5 md5 = MD5.Create();
+                byte[] signature = md5.ComputeHash(hmac.ComputeHash(utf8.GetBytes(payload)));
+                StringBuilder hex = new StringBuilder();
+                for(int i = 0; i < signature.Length; ++i)
+                    hex.Append(signature[i].ToString("x2"));
+                clnt.Headers.Add("livepvrdata-signature", hex.ToString());
+            }
         }
     }
 }
