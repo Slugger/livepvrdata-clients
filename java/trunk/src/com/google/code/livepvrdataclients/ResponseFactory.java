@@ -1,5 +1,5 @@
 /*
- *      Copyright 2011 livepvrdata.com
+ *      Copyright 2011-2012 livepvrdata.com
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
-import com.livepvrdata.data.net.resp.ExceptionError;
-import com.livepvrdata.data.net.resp.Response;
-import com.livepvrdata.data.net.resp.SimpleResponse;
-import com.livepvrdata.data.net.resp.StatusResponse;
+import com.livepvrdata.common.data.net.resp.EventsResponse;
+import com.livepvrdata.common.data.net.resp.ExceptionError;
+import com.livepvrdata.common.data.net.resp.Response;
+import com.livepvrdata.common.data.net.resp.SimpleResponse;
+import com.livepvrdata.common.data.net.resp.StatusResponse;
 
 public final class ResponseFactory {
 	static private final Gson GSON = new Gson();
@@ -38,9 +39,15 @@ public final class ResponseFactory {
 			return GSON.fromJson(input, SimpleResponse.class);
 		return GSON.fromJson(input, ExceptionError.class);
 	}
+	
+	static public Response getEventsResponse(String input) {
+		if(!isError(input))
+			return GSON.fromJson(input, EventsResponse.class);
+		return GSON.fromJson(input, ExceptionError.class);
+	}
 
 	static private boolean isError(String input) {
-		if(input.equals("null"))
+		if("null".equals(input))
 			return false;
 		try {
 			JSONObject jobj = new JSONObject(input);
