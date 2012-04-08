@@ -1,5 +1,5 @@
 ﻿/*
- *      Copyright 2011 Battams, Derek
+ *      Copyright 2011-2012 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ namespace LivePvrData.Net.Requests
     {
         private string epgName;
         private string feedName;
-        private string email;
 
         /// <summary>
         /// Default constructor, DO NOT USE!  Used by JSON serializer only!
@@ -41,12 +40,10 @@ namespace LivePvrData.Net.Requests
         /// </summary>
         /// <param name="epgName">The name of the team as found in the EPG feed</param>
         /// <param name="feedName">The name of the team as found in the livepvrdata monitoring feed</param>
-        /// <param name="email">A VALID email address where the web service will send the confirmation link to</param>
-        public OverrideRequest(string epgName, string feedName, string email)
+        public OverrideRequest(string epgName, string feedName)
         {
             this.epgName = epgName;
             this.feedName = feedName;
-            this.email = email;
         }
 
         /// <summary>
@@ -60,11 +57,5 @@ namespace LivePvrData.Net.Requests
         /// </summary>
         [JsonExProperty("feedName")]
         public string FeedName { get { return feedName; } protected set { feedName = value; } }
-
-        /// <summary>
-        /// The VALID email address where livepvrdata will send the confirmation link to; only confirmed override submissions are committed to the data store
-        /// </summary>
-        [JsonExProperty("email")]
-        public string Email { get { return email; } protected set { email = value; } }
     }
 }

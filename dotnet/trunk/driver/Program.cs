@@ -1,5 +1,5 @@
 ﻿/*
- *      Copyright 2011 Battams, Derek
+ *      Copyright 2011-2012 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ namespace driver
         static void Main(string[] args)
         {
             Client clnt = new Client();
-            Response r = clnt.GetStatus("College Football", new string[] { "Rhode Island", "Syracuse" }, DateTime.UtcNow);
+            Response r = clnt.GetStatus("MLB Baseball", new string[] { "Toronto", "Cleveland" }, DateTime.UtcNow);
             Console.WriteLine(r);
+            Console.ReadLine();
         }
     }
 }
