@@ -1,5 +1,5 @@
 ﻿/*
- *      Copyright 2011 Battams, Derek
+ *      Copyright 2011-2012 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ namespace LivePvrData
         /// </summary>
         static public Uri DefaultUri { get { return DEFAULT_URI; } }
 
-        private const string DEFAULT_USER_AGENT = "LivePvrDataDotNet/1.0.0.0";
+        private const string DEFAULT_USER_AGENT = "LivePvrDataDotNet/10.0.0.0";
         /// <summary>
         /// The default user agent instances of this class will use if not specified; all consumers of this API are encouraged to NOT use this value!
         /// </summary>
@@ -43,34 +43,48 @@ namespace LivePvrData
 
         private Uri uri;
         private string userAgent;
+        private string email;
+        private string secret;
 
         /// <summary>
         /// Constructor; most users of this API SHOULD NOT use this constructor.  It's mainly used for testing and debugging against test versions of the web service.
         /// </summary>
         /// <param name="baseUri">The base URI of the web service to connect to.</param>
         /// <param name="userAgent">The custom user agent header to send on all requests; this should uniquely identify the application using this API.</param>
-        public Client(Uri baseUri, string userAgent)
+        /// <param name="email">The email address used to sign the API request; requests are only signed if a non-null email address is provided.</param>
+        /// <param name="secret">The API access code assigned the given email address; request signatures are calculated based on the email and this secret; get your secret by signing into www.livepvrdata.com</param>
+        public Client(Uri baseUri, string userAgent, string email, string secret)
         {
             this.uri = baseUri;
             this.userAgent = userAgent;
+            this.email = email;
+            this.secret = secret;
         }
 
         /// <summary>
         /// Constructor; most users of this API SHOULD NOT use this constructor.  It's made available for testing of the API.
         /// </summary>
         /// <param name="baseUri">The base URI of the web service to connect to.</param>
-        public Client(Uri baseUri) : this(baseUri, DEFAULT_USER_AGENT) { }
+        public Client(Uri baseUri) : this(baseUri, DEFAULT_USER_AGENT, null, null) { }
 
         /// <summary>
-        /// Constructor; this is the constructor that most users SHOULD use.  Allows setting of the User-Agent header sent with each request.
+        /// Constructor.  Allows setting of the User-Agent header sent with each request; your requests will NOT be signed with the ctor and most API calls against the web service request a valid signature.
         /// </summary>
         /// <param name="userAgent">The unique app identifier of the program using this API (e.g. "MyApp/1.0.0")</param>
-        public Client(string userAgent) : this(DEFAULT_URI, userAgent) { }
+        public Client(string userAgent) : this(DEFAULT_URI, userAgent, null, null) { }
 
         /// <summary>
         /// Default constructor; connects to the production version of the web service using the default agent header; NOT recommended, please specifiy a unique agent header when using this API.
         /// </summary>
-        public Client() : this(DEFAULT_URI, DEFAULT_USER_AGENT) { }
+        public Client() : this(DEFAULT_URI, DEFAULT_USER_AGENT, null, null) { }
+
+        /// <summary>
+        /// Constructor; this is the constructor that most users SHOULD use.  Allows setting of the User-Agent header and provides the email and API access code for requeset signing.
+        /// </summary>
+        /// <param name="userAgent"></param>
+        /// <param name="email"></param>
+        /// <param name="secret"></param>
+        public Client(string userAgent, string email, string secret) : this(DEFAULT_URI, userAgent, email, secret) { }
 
         /// <summary>
         /// Query the status of an event
@@ -109,7 +123,7 @@ namespace LivePvrData
             Serializer serializer = new Serializer(typeof(StatusRequest));
             try
             {
-                string payload = GetWebClient().UploadString(uri + "query", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
+                string payload = GetWebClient().UploadString(uri + "api/qryStatus", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
                 serializer = new Serializer(typeof(Object));
                 Hashtable jobj = (Hashtable)serializer.Deserialize(payload);
                 if (jobj == null)
@@ -136,12 +150,11 @@ namespace LivePvrData
         /// </summary>
         /// <param name="epgName">The name of the team as seen in the EPG feed (i.e. "Oklahoma State")</param>
         /// <param name="feedName">The name of the team as seen at http://www.livepvrdata.com/events.jsp (i.e. "Oklahoma St")</param>
-        /// <param name="email">A VALID email address; a confirmation link is sent to this address by the web service and the submission is not committed to the data store until the link in the email is clicked.</param>
         /// <returns>A SimpleResponse on success or an ErrorResponse on failure; cast the return value based on the <code>isError()</code> value of the returned object</returns>
         /// <exception cref="System.IO.IOException">Thrown if there is a fatal error when attempting to communicate with the web service (i.e. Internet connection is down, web service is down, firewall is blocking access to web service, etc.)</exception>
-        public Response SubmitOverrideRequest(string epgName, string feedName, string email)
+        public Response SubmitOverrideRequest(string epgName, string feedName)
         {
-            return SubmitOverrideRequest(new OverrideRequest(epgName, feedName, email));
+            return SubmitOverrideRequest(new OverrideRequest(epgName, feedName));
         }
 
         /// <summary>
@@ -155,7 +168,7 @@ namespace LivePvrData
             Serializer serializer = new Serializer(typeof(OverrideRequest));
             try
             {
-                string payload = GetWebClient().UploadString(uri + "goedit", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
+                string payload = GetWebClient().UploadString(uri + "api/override", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
                 serializer = new Serializer(typeof(Object));
                 Hashtable jobj = (Hashtable)serializer.Deserialize(payload);
                 if (!(bool)jobj["isError"])
