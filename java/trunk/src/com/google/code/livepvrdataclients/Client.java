@@ -110,8 +110,10 @@ public final class Client {
 		HttpClient clnt = getClient();
 		List<NameValuePair> args = new ArrayList<NameValuePair>();
 		OverrideSubmissionRequest req = new OverrideSubmissionRequest(epgName, feedName);
-		args.add(new BasicNameValuePair("q", GSON.toJson(req)));
+		String payload = GSON.toJson(req);
+		args.add(new BasicNameValuePair("q", payload));
 		HttpGet httpGet = new HttpGet(baseUri + String.format("/api/override?%s", URLEncodedUtils.format(args, "UTF-8")));
+		signRequest(httpGet, payload);
 		return ResponseFactory.getResponse(clnt.execute(httpGet, new BasicResponseHandler()));
 	}
 
