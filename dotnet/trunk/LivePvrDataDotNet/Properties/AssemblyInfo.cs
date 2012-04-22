@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Live PVR Data Client for DotNet")]
-[assembly: AssemblyCopyright("Copyright © 2011 Battams, Derek")]
+[assembly: AssemblyCopyright("Copyright © 2011-2012 Battams, Derek")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

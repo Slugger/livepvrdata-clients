@@ -45,14 +45,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
-    <Compile Include="Net\Requests\OverrideRequest.cs" />
-    <Compile Include="Net\Requests\Request.cs" />
-    <Compile Include="Net\Responses\ErrorResponse.cs" />
-    <Compile Include="Net\Responses\Response.cs" />
-    <Compile Include="Net\Responses\SimpleResponse.cs" />
-    <Compile Include="Net\Responses\StatusResponse.cs" />
+    <Compile Include="Data\Event.cs" />
+    <Compile Include="Data\Net\Requests\EventsRequest.cs" />
+    <Compile Include="Data\Net\Requests\OverrideRequest.cs" />
+    <Compile Include="Data\Net\Requests\Request.cs" />
+    <Compile Include="Data\Net\Responses\ErrorResponse.cs" />
+    <Compile Include="Data\Net\Responses\EventsResponse.cs" />
+    <Compile Include="Data\Net\Responses\Response.cs" />
+    <Compile Include="Data\Net\Responses\SimpleResponse.cs" />
+    <Compile Include="Data\Net\Responses\StatusResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Net\Requests\StatusRequest.cs" />
+    <Compile Include="Data\Net\Requests\StatusRequest.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

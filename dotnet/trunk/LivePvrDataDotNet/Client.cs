@@ -16,8 +16,8 @@
 using System;
 using System.Net;
 using System.Web;
-using LivePvrData.Net.Responses;
-using LivePvrData.Net.Requests;
+using LivePvrData.Data.Net.Responses;
+using LivePvrData.Data.Net.Requests;
 using JsonExSerializer;
 using System.Collections;
 using System.Security.Cryptography;
@@ -38,6 +38,7 @@ namespace LivePvrData
         static public Uri DefaultUri { get { return DEFAULT_URI; } }
 
         private const string DEFAULT_USER_AGENT = "LivePvrDataDotNet/10.0.0.0";
+
         /// <summary>
         /// The default user agent instances of this class will use if not specified; all consumers of this API are encouraged to NOT use this value!
         /// </summary>
@@ -151,7 +152,7 @@ namespace LivePvrData
         }
 
         /// <summary>
-        /// Submit an update to the web service override map.  When successful, an email is sent to the provided address, which contains a link that must be clicked on in order to commit the change to the online data store.
+        /// Submit an update to the web service override map.
         /// </summary>
         /// <param name="epgName">The name of the team as seen in the EPG feed (i.e. "Oklahoma State")</param>
         /// <param name="feedName">The name of the team as seen at http://www.livepvrdata.com/events.jsp (i.e. "Oklahoma St")</param>
@@ -163,10 +164,10 @@ namespace LivePvrData
         }
 
         /// <summary>
-        /// Submit an update to the web service override map.  When successful, an email is sent to the provided address, which contains a link that must be clicked on in order to commit the change to the online data store.
+        /// Submit an update to the web service override map.
         /// </summary>
         /// <param name="req">An OverrideRequest object describing the details of the override edit request to be submitted to the server.</param>
-        /// <returns>A SimpleResponse on success or an ErrorResponse on failure; cast the return value based on the <code>isError()</code> value of the returned object</returns>
+        /// <returns>A SimpleResponse on success or an ErrorResponse on failure; cast the return value based on the <code>IsError</code> property of the returned object</returns>
         /// <exception cref="System.IO.IOException">Thrown if there is a fatal error when attempting to communicate with the web service (i.e. Internet connection is down, web service is down, firewall is blocking access to web service, etc.)</exception>
         public Response SubmitOverrideRequest(OverrideRequest req)
         {
@@ -183,6 +184,52 @@ namespace LivePvrData
                 {
                     serializer = new Serializer(typeof(SimpleResponse));
                     return (SimpleResponse)serializer.Deserialize(payload);
+                }
+                else
+                {
+                    serializer = new Serializer(typeof(ErrorResponse));
+                    return (ErrorResponse)serializer.Deserialize(payload);
+                }
+            }
+            catch (System.Net.WebException e)
+            {
+                throw new System.IO.IOException("IOError!", e);
+            }
+        }
+
+        /// <summary>
+        /// Retrieve a list of events of the specified type that can be monitored by the web service for the specified date.
+        /// </summary>
+        /// <param name="type">The "type" of event to query (i.e. "NHL Hockey", "NFL Football", etc.).</param>
+        /// <param name="start">The date to query; the time of day in the object is ignored; MUST be UTC</param>
+        /// <returns>An EventsResponse on success or an ErrorResponse on failure; cast value based on <code>IsError</code> property of the returned object</returns>
+        /// <exception cref="System.IO.IOException">Thrown if there are any fatal errors communicating with the web service.</exception>
+        public Response GetEventsForDate(string type, DateTime start)
+        {
+            return GetEventsForDate(new EventsRequest(type, start));
+        }
+
+        /// <summary>
+        /// Retrieve a list of events of the specified type that can be monitored by the web service for the specified date.
+        /// </summary>
+        /// <param name="req">An EventsRequest object describing the type of events to retrive and the date for which to query them for.</param>
+        /// <returns>An EventsResponse on success or an ErrorResponse on failure; cast value based on <code>IsError</code> property of the returned object</returns>
+        /// <exception cref="System.IO.IOException">Thrown if there are any fatal errors communicating with the web service.</exception>
+        public Response GetEventsForDate(EventsRequest req)
+        {
+            Serializer serializer = new Serializer(typeof(EventsRequest));
+            try
+            {
+                string payload = serializer.Serialize(req);
+                WebClient clnt = GetWebClient();
+                SignRequest(clnt, payload);
+                payload = clnt.UploadString(uri + "api/qryEvents", "q=" + HttpUtility.UrlEncode(payload));
+                serializer = new Serializer(typeof(Object));
+                Hashtable jobj = (Hashtable)serializer.Deserialize(payload);
+                if (!(bool)jobj["isError"])
+                {
+                    serializer = new Serializer(typeof(EventsResponse));
+                    return (EventsResponse)serializer.Deserialize(payload);
                 }
                 else
                 {
