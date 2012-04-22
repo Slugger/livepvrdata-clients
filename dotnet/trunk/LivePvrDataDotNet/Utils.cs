@@ -1,5 +1,5 @@
 ﻿/*
- *      Copyright 2011 Battams, Derek
+ *      Copyright 2011-2012 Battams, Derek
  *       
  *       Licensed under the Apache License, Version 2.0 (the "License");
  *       you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ namespace LivePvrData
 {
     class Utils
     {
-        static private DateTime EPOCH = new DateTime(1970, 1, 1, 0, 0, 0);
+        static private DateTime EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         static public long UnixTimestampNow()
         {
@@ -31,6 +31,8 @@ namespace LivePvrData
 
         static public long UnixTimestamp(DateTime time)
         {
+            if (time.Kind != DateTimeKind.Utc)
+                throw new ArgumentException("DateTime argument must be of kind 'UTC'");
             TimeSpan tSpan = time - EPOCH;
             return (long)tSpan.TotalSeconds;
         }

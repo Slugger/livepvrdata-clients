@@ -15,7 +15,8 @@
  */
 using System;
 using LivePvrData;
-using LivePvrData.Net.Responses;
+using LivePvrData.Data.Net.Responses;
+using LivePvrData.Data;
 
 namespace driver
 {
@@ -24,7 +25,10 @@ namespace driver
         static void Main(string[] args)
         {
             Client clnt = new Client();
-            Response r = clnt.GetStatus("MLB Baseball", new string[] { "Toronto", "Cleveland" }, DateTime.UtcNow);
+            Response r = clnt.GetEventsForDate("MLB Baseball", DateTime.UtcNow);
+            foreach (Event e in ((EventsResponse)r).Events)
+                Console.WriteLine(e);
+            //Response r = clnt.GetStatus("MLB Baseball", new string[] { "Toronto", "Cleveland" }, DateTime.UtcNow);
             Console.WriteLine(r);
             Console.ReadLine();
         }
