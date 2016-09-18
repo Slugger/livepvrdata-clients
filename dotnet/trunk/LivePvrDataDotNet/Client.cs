@@ -31,7 +31,7 @@ namespace LivePvrData
     /// </summary>
     public class Client
     {
-        static private Uri DEFAULT_URI = new Uri("http://localhost:8080");
+        static private Uri DEFAULT_URI = new Uri("http://localhost:8080/livepvrdata");
         /// <summary>
         /// The default URI instances of this class will connect to if not specified; always points to the latest production version of the web service.
         /// </summary>
@@ -129,7 +129,7 @@ namespace LivePvrData
                 string payload = serializer.Serialize(req);
                 WebClient clnt = GetWebClient();
                 SignRequest(clnt, payload);
-                payload = clnt.UploadString(uri + "livepvrdata/query", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
+                payload = clnt.UploadString(uri + "query", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
                 serializer = new Serializer(typeof(Object));
                 Hashtable jobj = (Hashtable)serializer.Deserialize(payload);
                 if (jobj == null)
