@@ -31,13 +31,13 @@ namespace LivePvrData
     /// </summary>
     public class Client
     {
-        static private Uri DEFAULT_URI = new Uri("http://www.livepvrdata.com");
+        static private Uri DEFAULT_URI = new Uri("http://localhost:8080");
         /// <summary>
         /// The default URI instances of this class will connect to if not specified; always points to the latest production version of the web service.
         /// </summary>
         static public Uri DefaultUri { get { return DEFAULT_URI; } }
 
-        private const string DEFAULT_USER_AGENT = "LivePvrDataDotNet/10.0.0.0";
+        private const string DEFAULT_USER_AGENT = "LivePvrDataDotNet/10.0.1.0";
 
         /// <summary>
         /// The default user agent instances of this class will use if not specified; all consumers of this API are encouraged to NOT use this value!
@@ -129,7 +129,7 @@ namespace LivePvrData
                 string payload = serializer.Serialize(req);
                 WebClient clnt = GetWebClient();
                 SignRequest(clnt, payload);
-                payload = clnt.UploadString(uri + "api/qryStatus", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
+                payload = clnt.UploadString(uri + "livepvrdata/query", "q=" + HttpUtility.UrlEncode(serializer.Serialize(req)));
                 serializer = new Serializer(typeof(Object));
                 Hashtable jobj = (Hashtable)serializer.Deserialize(payload);
                 if (jobj == null)
