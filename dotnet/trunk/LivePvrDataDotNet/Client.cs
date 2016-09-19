@@ -31,7 +31,7 @@ namespace LivePvrData
     /// </summary>
     public class Client
     {
-        static private Uri DEFAULT_URI = new Uri("http://localhost:8080/livepvrdata");
+        static private Uri DEFAULT_URI = new Uri("http://localhost:8080/livepvrdata/");
         /// <summary>
         /// The default URI instances of this class will connect to if not specified; always points to the latest production version of the web service.
         /// </summary>
